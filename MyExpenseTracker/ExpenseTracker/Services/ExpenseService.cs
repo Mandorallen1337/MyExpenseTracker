@@ -8,5 +8,6 @@ namespace MyExpenseTracker.ExpenseTracker.Services
 {
     public class ExpenseService
     {
+        
     }
 }

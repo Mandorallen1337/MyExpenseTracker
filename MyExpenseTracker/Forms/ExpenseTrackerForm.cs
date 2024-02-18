@@ -23,14 +23,16 @@ namespace MyExpenseTracker.Forms
         public ExpenseTrackerForm()
         {
             InitializeComponent();
-
+            
+            MenuSidePanel.Width = CollapsedWidth;
+            MenuSidePanel.Paint += MenuSidePanel_Paint;
             this.Paint += ExpenseTrackerForm_Paint;
             timer = new Timer();
             timer.Interval = AnimationInterval;
             timer.Tick += Timer_Tick;
 
-            sidePanel.MouseEnter += SidePanel_MouseEnter;
-            sidePanel.MouseLeave += SidePanel_MouseLeave;
+            MenuSidePanel.MouseEnter += SidePanel_MouseEnter;
+            MenuSidePanel.MouseLeave += SidePanel_MouseLeave;
         }
 
         private void SidePanel_MouseLeave(object sender, EventArgs e)
@@ -49,9 +51,9 @@ namespace MyExpenseTracker.Forms
         {
             if (isExpanded)
             {
-                if (sidePanel.Width < ExpandedWidth)
+                if (MenuSidePanel.Width < ExpandedWidth)
                 {
-                    sidePanel.Width += ResizeIncrement;
+                    MenuSidePanel.Width += ResizeIncrement;
                 }
                 else
                 {
@@ -60,9 +62,9 @@ namespace MyExpenseTracker.Forms
             }
             else
             {
-                if (sidePanel.Width > CollapsedWidth)
+                if (MenuSidePanel.Width > CollapsedWidth)
                 {
-                    sidePanel.Width -= ResizeIncrement;
+                    MenuSidePanel.Width -= ResizeIncrement;
                 }
                 else
                 {
@@ -78,9 +80,27 @@ namespace MyExpenseTracker.Forms
 
             Color color1 = Color.FromArgb(255, 255, 128, 128);
             Color color2 = Color.FromArgb(255, 128, 128, 255);
+            Color color3 = Color.FromArgb(255, 128, 255, 128);
+
+            ColorBlend colorBlend = new ColorBlend();
+            colorBlend.Colors = new Color[] { color1, color2, color3 };
+            colorBlend.Positions = new float[] { 0, 0.5f, 1 };
+
+            LinearGradientBrush gradientBrush = new LinearGradientBrush(startPoint, endPoint, Color.Black, Color.Black);
+            gradientBrush.InterpolationColors = colorBlend;
+            e.Graphics.FillRectangle(gradientBrush, this.ClientRectangle);
+        }
+
+        private void MenuSidePanel_Paint(object sender, PaintEventArgs e)
+        {
+            Point startPoint = new Point(0, 0);
+            Point endPoint = new Point(MenuSidePanel.Width, MenuSidePanel.Height);
+
+            Color color1 = Color.FromArgb(255, 153, 102, 204);
+            Color color2 = Color.FromArgb(255, 204, 153, 255);
 
             LinearGradientBrush gradientBrush = new LinearGradientBrush(startPoint, endPoint, color1, color2);
-            e.Graphics.FillRectangle(gradientBrush, this.ClientRectangle);
+            e.Graphics.FillRectangle(gradientBrush, MenuSidePanel.ClientRectangle);
         }
     }
 }

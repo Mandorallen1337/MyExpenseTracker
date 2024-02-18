@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 namespace MyExpenseTracker.ExpenseTracker.Repositories
 {
     public class UserRepository : IUserRepository
-    {
-        //private readonly DatabaseConnection connection;
+    {        
         private readonly string connectionString;
+        PasswordHasher passwordHasher = new PasswordHasher();
 
         public UserRepository()
         {
@@ -22,15 +22,26 @@ namespace MyExpenseTracker.ExpenseTracker.Repositories
         }
         public void AddUser(User user)
         {
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            if (UsernameExists(user.Username))
             {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO users (username, password, email) VALUES (@username, @password, @email)", conn);
-                cmd.Parameters.AddWithValue("@username", user.Username);
-                cmd.Parameters.AddWithValue("@password", user.Password);
-                cmd.Parameters.AddWithValue("@email", user.Email);
-                cmd.ExecuteNonQuery();
+                throw new Exception("Username already exists");
             }
+            else
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    //Hash the password before storing it in the database
+                    string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO users (username, password, email) VALUES (@username, @password, @email)", conn);
+                    cmd.Parameters.AddWithValue("@username", user.Username);
+                    cmd.Parameters.AddWithValue("@password", hashedPassword);
+                    cmd.Parameters.AddWithValue("@email", user.Email);
+                    cmd.ExecuteNonQuery();
+                }
+            }                                     
         }
 
         public void DeleteUser(int userId)
@@ -104,20 +115,23 @@ namespace MyExpenseTracker.ExpenseTracker.Repositories
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                using (MySqlCommand cmd = new MySqlCommand("SELECT * FROM users WHERE username = @username AND password = @password", connection))
+
+                // Retrieve the hashed password from the database based on the provided username
+                string hashedPasswordFromDb;
+                using (MySqlCommand cmd = new MySqlCommand("SELECT password FROM users WHERE username = @username", connection))
                 {
                     cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", password);
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (!reader.HasRows)
-                        {
-                            throw new Exception("Invalid username or password");
-                        }
-                    }
+                    hashedPasswordFromDb = (string)cmd.ExecuteScalar();
+                }
+
+                // If no password is found for the username, or if the provided password doesn't match the hashed password from the database, throw an exception
+                if (hashedPasswordFromDb == null || !passwordHasher.VerifyPassword(password, hashedPasswordFromDb))
+                {
+                    throw new Exception("Invalid username or password");
                 }
             }
         }
+
 
         public bool UsernameExists(string username)
         {
@@ -145,14 +159,16 @@ namespace MyExpenseTracker.ExpenseTracker.Repositories
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
                 connection.Open();
                 using (MySqlCommand cmd = new MySqlCommand("INSERT INTO users (username, password, email) VALUES (@username, @password, @email)", connection))
                 {
                     cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", password);
+                    cmd.Parameters.AddWithValue("@password", hashedPassword);
                     cmd.Parameters.AddWithValue("@email", email);
                     cmd.ExecuteNonQuery();
                 }
+
             }
         }
     }

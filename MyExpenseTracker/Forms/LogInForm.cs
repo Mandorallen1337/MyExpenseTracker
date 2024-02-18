@@ -59,7 +59,7 @@ namespace MyExpenseTracker.Forms
             UserRepository userRepository = new UserRepository();
 
             try
-            {
+            {                
                 userRepository.LoginCheck(usernameBox.Text, passwordBox.Text);
                 MessageBox.Show("Login Successful");
                 ExpenseTrackerForm expenseTrackerForm = new ExpenseTrackerForm();

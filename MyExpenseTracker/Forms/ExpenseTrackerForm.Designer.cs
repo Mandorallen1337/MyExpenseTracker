@@ -28,23 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.sidePanel = new System.Windows.Forms.Panel();
+            this.MenuSidePanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // sidePanel
+            // MenuSidePanel
             // 
-            this.sidePanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.sidePanel.Location = new System.Drawing.Point(0, 0);
-            this.sidePanel.Name = "sidePanel";
-            this.sidePanel.Size = new System.Drawing.Size(200, 587);
-            this.sidePanel.TabIndex = 0;
+            this.MenuSidePanel.BackColor = System.Drawing.Color.DarkGray;
+            this.MenuSidePanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.MenuSidePanel.Location = new System.Drawing.Point(0, 0);
+            this.MenuSidePanel.Name = "MenuSidePanel";
+            this.MenuSidePanel.Size = new System.Drawing.Size(200, 587);
+            this.MenuSidePanel.TabIndex = 0;
             // 
             // ExpenseTrackerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1245, 587);
-            this.Controls.Add(this.sidePanel);
+            this.Controls.Add(this.MenuSidePanel);
             this.Name = "ExpenseTrackerForm";
             this.Text = "ExpenseTrackerForm";
             this.ResumeLayout(false);
@@ -53,6 +54,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel sidePanel;
+        private System.Windows.Forms.Panel MenuSidePanel;
     }
 }
