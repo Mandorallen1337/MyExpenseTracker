@@ -1,4 +1,4 @@
-Expense Tracker Application
+Expense Tracker Application.
 Overview
 The Expense Tracker Application is a simple yet powerful tool designed to help users manage their expenses efficiently. It allows users to track their spending, categorize expenses, set budgets, and visualize spending patterns through interactive graphs and charts.
 
